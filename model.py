@@ -42,7 +42,7 @@ class NER(torch.nn.Module):
 if __name__ == '__main__':     
     tokenizer = AutoTokenizer.from_pretrained("hfl/chinese-bert-wwm-ext")
     pretrained = AutoModel.from_pretrained("hfl/chinese-bert-wwm-ext")
-    path = "D:/03_code/chinese_ner/NER1/data/train_data.csv"
+    path = "./data/train_data.json"
     batch_size = 16
     loader = data_loader(path, batch_size, tokenizer)
     # 获取一个数据样例

@@ -14,9 +14,6 @@ def test(dataloader):
     total_content = 0
     
     for step, (inputs, labels) in enumerate(dataloader):
-        # if step == 5:
-        #     break
-        # print(step)
 
         with torch.no_grad():
             #[b, lens] -> [b, lens, 7] -> [b, lens]
@@ -38,7 +35,7 @@ def test(dataloader):
     print("Accuracy: ", correct / total, "Correct content: ", correct_content / total_content)
     
 
-def predict(loader, batch_size):
+def predict(loader):
     model = torch.load('./model/ner_tune.model')
     model.eval()
 
@@ -50,16 +47,12 @@ def predict(loader, batch_size):
             outs = model(inputs).argmax(dim=2)
 
         print("attention_mask shape:", inputs["attention_mask"].shape)
-        # for i in range(batch_size):
         for i in range(2):
             #移除pad
             select = inputs['attention_mask'][i] == 1
-            # print("select is :", select)
             input_id = inputs['input_ids'][i, select]
             out = outs[i, select]
-            # print("out = ", out)
             label = labels[i, select]
-            # print("labels = ", label)
             
             #输出原句子
             print("输出原句: ",tokenizer.decode(input_id).replace(' ', ''))
@@ -84,16 +77,11 @@ def predict(loader, batch_size):
                         s += ner_tag
                         s += ": "
                     s += tokenizer.decode(input_id[j])
-                    # s += str(tag[j].item())
                 if i == 0:
                     print("输出真实标签命名实体部分: ", s)
                 else:
                     print("输出预测标签命名实体部分: ", s)                    
 
-                #     s += tokenizer.decode(input_id[j])
-                #     s += str(tag[j].item())
-
-                # print(s)                                              
 
             print('='*100)
 
@@ -103,11 +91,10 @@ def predict(loader, batch_size):
     
 if __name__ == "__main__":  
     tokenizer = AutoTokenizer.from_pretrained("hfl/chinese-bert-wwm-ext")
-    path = "./data/test_data.csv"
+    path = "./data/test_data.json"
     batch_size = 8
     loader = data_loader(path, batch_size, tokenizer)
-    # test(loader)
-    predict(loader, batch_size)
+    predict(loader)
     
     
     

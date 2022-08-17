@@ -32,7 +32,6 @@ class collater():
         outputs: 输出经过padding的tokens,以及tokens的labels
         """
         tokens = [i[0] for i in data]
-        # print("=================", len(tokens[0]))
         labels = [i[1] for i in data]
         inputs = self.tokenizer.batch_encode_plus(tokens,
                                             padding="max_length",  # 补齐tensor长度，以最大长度为准
@@ -41,8 +40,6 @@ class collater():
                                             return_tensors="pt",
                                             is_split_into_words=True)
         lens = inputs["input_ids"].shape[1]
-        # print("----------------", inputs["input_ids"].shape)
-        # print("----------------", inputs["attention_mask"].shape)
         # 对label也进行补齐 用0表示padding的位置
         for i in range(len(labels)):  # 对每个label都补齐
             labels[i] = [0] + labels[i]   # 开头补一个cls
@@ -57,8 +54,6 @@ def data_loader(path, batch_size, tokenizer):
     lab_list, text_list = dp.label_text() 
     dataset = Dataset(lab_list, text_list)
     print("The length of dataset is ", len(dataset))
-    # print("The first sequence in dataset is ", dataset[0][0])
-    # print("The first label of the first sequence is ", dataset[0][1])
 
     # 数据加载
     collate_fn = collater(tokenizer=tokenizer)
@@ -71,14 +66,12 @@ def data_loader(path, batch_size, tokenizer):
     for i, (inputs, labels) in enumerate(loader):
         if i==0:
             print("The number of batchs are ", len(loader)) # 打印batch有多少个batch
-            # print("The first sequence is ", tokenizer.decode(inputs["input_ids"][0]))
-            # print("The first label is ", labels[0])
 
     return loader
 
 if __name__ == "__main__":  
     tokenizer = AutoTokenizer.from_pretrained("hfl/chinese-bert-wwm-ext")
-    path = "D:/03_code/chinese_ner/NER1/data/train_data.csv"
+    path = "./data/data.json"
     batch_size = 16
     loader = data_loader(path, batch_size, tokenizer)
     

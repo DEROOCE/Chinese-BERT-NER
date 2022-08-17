@@ -1,4 +1,3 @@
-import pandas as pd
 import json
 import re
 import random 
@@ -29,12 +28,12 @@ class DataPreprocess():
         idx_l = []
         att_l = []  # attribute 
         label_l = []   # {'definition', 'experimental_result', 'None'}
-        for i, instance in enumerate(data):
+        for instance in data:
             text = instance["src"][27:]
             text = text.replace("(", "（").replace(")", "）")
             text_l.append(text) 
             tgt = instance["tgt"]
-            # tgt = tgt.replace("(", "（").replace(")", "）").replace("+", "\\+")
+            # special tokens for regex
             tgt = tgt.translate(str.maketrans({
                                             "(": "（",
                                             ")": "）",
@@ -49,7 +48,6 @@ class DataPreprocess():
                                             ".": "\\.",
                                             "\\": "/",
                                             }))
-            # ( ,), +识别不了
             
             att = re.findall(r"[a-zA-Z_]+", tgt)[0]
             att_l.append(att)
@@ -103,9 +101,7 @@ class DataPreprocess():
             
 
 if __name__ == '__main__':   
-    # path = "D:/03_code/chinese_ner/NER2/data/train_multi.json"
-    # path = "D:/03_code/chinese_ner/NER2/data/train_data.json"
-    path = "D:/03_code/chinese_ner/NER2/data/test_data.json"
+    path = "./data/data.json"
     dp = DataPreprocess(path)
     data = dp.read_data()
     dp.train_test_split()

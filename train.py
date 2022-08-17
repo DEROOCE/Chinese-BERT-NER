@@ -40,7 +40,7 @@ def train(model, epochs, loader):
 if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained("hfl/chinese-bert-wwm-ext")
     pretrained = AutoModel.from_pretrained("hfl/chinese-bert-wwm-ext")
-    path = "./data/train_data.csv"
+    path = "./data/train_data.json"
     batch_size = 32
     loader = data_loader(path, batch_size, tokenizer)
     epochs = 10
