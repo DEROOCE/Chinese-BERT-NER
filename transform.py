@@ -1,10 +1,10 @@
 
 
 #对计算结果和label变形,并且移除pad
-def reshape_and_remove_pad(outs, labels, attention_mask):
+def reshape_and_remove_pad(outs, labels, attention_mask, num_class):
     #变形,便于计算loss
     #[b, lens, 7] -> [b*lens, 7]
-    outs = outs.reshape(-1, 7)
+    outs = outs.reshape(-1, num_class)
     #[b, lens] -> [b*lens]
     labels = labels.reshape(-1)
 

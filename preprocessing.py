@@ -1,3 +1,4 @@
+import pandas as pd
 import json
 import re
 import random 
@@ -28,12 +29,15 @@ class DataPreprocess():
         idx_l = []
         att_l = []  # attribute 
         label_l = []   # {'definition', 'experimental_result', 'None'}
-        for instance in data:
+        for i, instance in enumerate(data):
             text = instance["src"][27:]
+            # 句子太长的处理： 512丢弃
+            if len(list(text)) > 512:
+                continue 
             text = text.replace("(", "（").replace(")", "）")
             text_l.append(text) 
             tgt = instance["tgt"]
-            # special tokens for regex
+            # tgt = tgt.replace("(", "（").replace(")", "）").replace("+", "\\+")
             tgt = tgt.translate(str.maketrans({
                                             "(": "（",
                                             ")": "）",
@@ -48,6 +52,7 @@ class DataPreprocess():
                                             ".": "\\.",
                                             "\\": "/",
                                             }))
+            # ( ,), +识别不了
             
             att = re.findall(r"[a-zA-Z_]+", tgt)[0]
             att_l.append(att)
@@ -73,9 +78,11 @@ class DataPreprocess():
                     label_l.append(label)
                 
                 # print(text[start:end])
+        print("="*50)
         print("length of attributes", len(att_l))
         print("length of indexs", len(idx_l))
         print("length of labels", len(label_l))
+        print("="*50)
             
         self.lab_list = label_l
         self.text_list = text_l
