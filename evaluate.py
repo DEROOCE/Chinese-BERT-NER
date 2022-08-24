@@ -20,16 +20,17 @@ def test(dataloader, hparams):
         with torch.no_grad():
             #[b, lens] -> [b, lens, 3] -> [b, lens]
             outs = model(inputs)
-
+            
+        #print("outs.shape:", outs.shape)
         #对outs和label变形,并且移除pad
         #outs -> [b, lens, 3] -> [c, 3]
         #labels -> [b, lens] -> [c]
         outs, labels = reshape_and_remove_pad(outs, labels,
                                             inputs['attention_mask'],
                                             hparams.num_class)
-        print("outs shape:  ", outs.shape)
+        #print("outs shape:  ", outs.shape)
         # print("labels = ", labels[:200], "label shape:", labels.shape, "\n =========================")
-        counts = get_correct_and_total_count(labels, outs, hparams.num_class)
+        counts = get_correct_and_total_count(labels, outs)
         correct += counts[0]
         total += counts[1]
         correct_content += counts[2]
@@ -42,16 +43,15 @@ def predict(loader, hparams):
     model = torch.load(hparams.model_dir)
     model.eval()
 
-
-    for i, (inputs, labels) in enumerate(loader):
+    for j, (inputs, labels) in enumerate(loader):
 
         with torch.no_grad():
             #[b, lens] -> [b, lens, 3] -> [b, lens]
             outs = model(inputs).argmax(dim=2)
 
         print("attention_mask shape:", inputs["attention_mask"].shape)
-        # for i in range(batch_size):
-        for i in range(5):
+        for i in range(hparams.batch_size):
+        # for i in range(5):
             #移除pad
             select = inputs['attention_mask'][i] == 1
             # print("select is :", select)
@@ -70,20 +70,20 @@ def predict(loader, hparams):
                 "1": "definition", 
                 "2":"experimental_result",
             }
-            for i, tag in enumerate([label, out]):
+            for m, tag in enumerate([label, out]):
                 s = ''
-                for j in range(len(tag)):
-                    if tag[j] == 0:
+                for n in range(len(tag)):
+                    if tag[n] == 0:
                         s += '·'
                         continue
                     
-                    if tag[j] !=0 and tag[j-1] == 0:    
-                        ner_tag = ner_tags[str(tag[j].item())]
+                    if tag[n] !=0 and tag[n-1] == 0:    
+                        ner_tag = ner_tags[str(tag[n].item())]
                         s += ner_tag
                         s += ": "
-                    s += tokenizer.decode(input_id[j])
+                    s += tokenizer.decode(input_id[n])
                     # s += str(tag[j].item())
-                if i == 0:
+                if m == 0:
                     print("输出真实标签命名实体部分: ", s)
                 else:
                     print("输出预测标签命名实体部分: ", s)                    
@@ -91,8 +91,6 @@ def predict(loader, hparams):
 
             print('='*100)
 
-
-    
     
     
 if __name__ == "__main__":
