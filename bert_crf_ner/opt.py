@@ -1,0 +1,27 @@
+import argparse  
+
+def get_opts():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root_dir", type=str, default="./data/train_data.json", help="The directory of data.")
+    parser.add_argument("--model_dir", type=str, default="", help="The directory of model.")
+    parser.add_argument("--batch_size", type=int, default=128, help="Number of batch size.")
+    parser.add_argument('--max_length', type=int, default=512, help="the maximum length of the sequence.")
+    parser.add_argument('--hidden_size', type=int, default=768, help="The size of hidden layer.")
+    parser.add_argument('--num_class', type=int, default=3, help="The number of classes.")
+    parser.add_argument('--shuffle_data', type=bool, default=True, help="Shuffle data or not.")
+    parser.add_argument("--do_train", default=False, action="store_true")
+    parser.add_argument("--do_eval", default=False, action="store_true")
+    parser.add_argument("--do_pred", default=False, action="store_true")
+    parser.add_argument("--markup", default="bios", type=str, choices=["bios", "bio"])
+    parser.add_argument("--learning_rate", default=3e-5, type=float)
+    parser.add_argument("--crf_learning_rate", default=5e-5, type=float)
+    parser.add_argument("--weight_decay", default=0.01, type=float)
+    #parser.add_argument("--batch_size", default=8, type=int)
+    parser.add_argument("--epoch_num", default=50, type=int)
+    parser.add_argument("--gpu", default="0", type=str)
+    parser.add_argument("--clip_grad", default=5.0, type=float)
+    parser.add_argument("--arch", default="bert_crf", type=str)
+    parser.add_argument("--task_name", default="ner", type=str)
+    #parser.add_argument("--dataset", default="msra", type=str)
+
+    return parser.parse_args() 
